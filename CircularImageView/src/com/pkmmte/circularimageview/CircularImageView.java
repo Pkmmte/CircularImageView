@@ -1,6 +1,5 @@
 package com.pkmmte.circularimageview;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -225,9 +224,8 @@ public class CircularImageView extends ImageView
 		canvas.drawCircle(center + outerWidth, center + outerWidth, ((canvasSize - (outerWidth * 2)) / 2) - 4.0f, paint);
 	}
 	
-	@SuppressLint("ClickableViewAccessibility")
 	@Override
-	public boolean onTouchEvent(MotionEvent event)
+	public boolean dispatchTouchEvent(MotionEvent event)
 	{
 		// Check for clickable state and do nothing if disabled
 		if(!this.isClickable()) {
@@ -250,7 +248,7 @@ public class CircularImageView extends ImageView
 		
 		// Redraw image and return super type
 		this.invalidate();
-		return super.onTouchEvent(event);
+		return super.dispatchTouchEvent(event);
 	}
 	
 	public void invalidate(Rect dirty) {
@@ -350,5 +348,10 @@ public class CircularImageView extends ImageView
 	public void refreshBitmapShader()
 	{
 		shader = new BitmapShader(Bitmap.createScaledBitmap(image, canvasSize, canvasSize, false), Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+	}
+	
+	public boolean isSelected()
+	{
+		return this.isSelected;
 	}
 }
