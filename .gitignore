@@ -1,7 +1,3 @@
-# Built application files
-*.apk
-*.ap_
-
 # Files for the Dalvik VM
 *.dex
 
@@ -13,7 +9,7 @@ bin/
 gen/
 
 # No dependencies
-libs/
+CircularImageView/libs/
 
 # Gradle files
 .gradle/
