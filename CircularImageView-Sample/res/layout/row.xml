@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.pkmmte.circularimageview.sample"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -16,10 +16,12 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:clickable="true"
-        app:selector="true"
-        app:selector_color="#44FFBB33"
-        app:selector_stroke_color="#88FF8800"
-        app:selector_stroke_width="2dp" />
+        app:civ_selector="true"
+        app:civ_selector_color="#44FFBB33"
+        app:civ_selector_stroke_color="#88FF8800"
+        app:civ_selector_stroke_width="2dp"
+        app:civ_shadow="false"
+        />
 
     <TextView
         android:layout_width="match_parent"
