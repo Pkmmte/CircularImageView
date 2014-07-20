@@ -254,17 +254,23 @@ public class CircularImageView extends ImageView
 	public void invalidate(Rect dirty) {
 		super.invalidate(dirty);
 		image = drawableToBitmap(getDrawable());
+		if(shader != null || canvasSize > 0)
+			refreshBitmapShader();
 	}
 	
 	public void invalidate(int l, int t, int r, int b) {
 		super.invalidate(l, t, r, b);
 		image = drawableToBitmap(getDrawable());
+		if(shader != null || canvasSize > 0)
+			refreshBitmapShader();
 	}
 	
 	@Override
 	public void invalidate() {
 		super.invalidate();
 		image = drawableToBitmap(getDrawable());
+		if(shader != null || canvasSize > 0)
+			refreshBitmapShader();
 	}
 	
 	@Override
@@ -350,6 +356,10 @@ public class CircularImageView extends ImageView
 		shader = new BitmapShader(Bitmap.createScaledBitmap(image, canvasSize, canvasSize, false), Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
 	}
 	
+	/**
+	 * Returns whether or not this view is currently 
+	 * in its selected state.
+	 */
 	public boolean isSelected()
 	{
 		return this.isSelected;
