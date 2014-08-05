@@ -10,18 +10,11 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-        <item name="circularImageViewStyle">@style/CircularImageViewStyle</item>
     </style>
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-    </style>
-
-    <style name="CircularImageViewStyle">
-        <item name="civ_border">true</item>
-        <item name="civ_shadow">true</item>
-
     </style>
 
 </resources>
