@@ -1,0 +1,27 @@
+apply plugin: 'com.android.application'
+
+android {
+  compileSdkVersion Integer.parseInt(project.COMPILE_SDK_VERSION)
+  buildToolsVersion project.BUILD_TOOLS_VERSION
+
+  defaultConfig {
+    minSdkVersion Integer.parseInt(project.MIN_SDK_VERSION)
+    targetSdkVersion Integer.parseInt(project.TARGET_SDK_VERSION)
+    versionCode Integer.parseInt(project.VERSION_CODE)
+    versionName project.VERSION_NAME
+  }
+
+  buildTypes {
+    release {
+      runProguard false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+    }
+  }
+}
+
+dependencies {
+  compile group: 'com.pkmmte.view', name: 'circularimageview', version: '1.+'
+  compile group: 'com.squareup.picasso', name: 'picasso', version: '2.3.+'
+}
+
+apply from: 'https://raw.github.com/Pkmmte/gradle-mvn-push/master/gradle-mvn-push.gradle'

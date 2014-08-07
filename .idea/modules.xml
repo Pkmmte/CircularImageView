@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/CircularImageView.iml" filepath="$PROJECT_DIR$/CircularImageView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/circularimageview/circularimageview.iml" filepath="$PROJECT_DIR$/circularimageview/circularimageview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/circularimageview-sample/circularimageview-sample.iml" filepath="$PROJECT_DIR$/circularimageview-sample/circularimageview-sample.iml" />
+    </modules>
+  </component>
+</project>
+
