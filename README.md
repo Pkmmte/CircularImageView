@@ -8,11 +8,26 @@ Custom view for circular images in Android while maintaining the best draw perfo
 
 Usage
 --------
-To make a circular ImageView, add this CircularImageView library to your project and add CircularImageView in your layout XML.
+To make a circular ImageView, add this CircularImageView library to your project and add CircularImageView in your layout XML. 
+You can also grab it via Gradle:
+
+```groovy
+compile 'com.pkmmte.view:circularimageview:1.1'
+```
+
+or Maven:
+
+```xml
+<dependency>
+		<groupId>com.pkmmte.view</groupId>
+		<artifactId>circularimageview</artifactId>
+		<version>1.1</version>
+</dependency>
+```
 
 ###XML
 ```xml
-    <com.pkmmte.circularimageview.CircularImageView
+    <com.pkmmte.view.CircularImageView
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:src="@drawable/image"
@@ -46,11 +61,43 @@ You may use the following properties in your XML to customize your CircularImage
     circularImageView.addShadow();
 ```
 
+Developed By
+--------
+
+Pkmmte Xeleon - www.pkmmte.com
+
+<a href="https://plus.google.com/102226057091361048952">
+  <img alt="Follow me on Google+"
+       src="http://data.pkmmte.com/temp/social_google_plus_logo.png" />
+</a>
+<a href="https://www.linkedin.com/pub/pkmmte-xeleon/7a/409/b4b/">
+  <img alt="Follow me on LinkedIn"
+       src="http://data.pkmmte.com/temp/social_linkedin_logo.png" />
+</a>
+
 License
 --------
 
-    CircularImageView by Pkmmte Xeleon is licensed under the Creative Commons Attribution 4.0 International License.
+    The MIT License (MIT)
     
-    To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/
+    Copyright (c) 2014 Pkmmte Xeleon
+    
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+    
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+    
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
 
 Based on a work at https://github.com/lopspower/CircularImageView.
