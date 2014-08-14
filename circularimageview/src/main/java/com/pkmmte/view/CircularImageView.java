@@ -18,6 +18,10 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
+/**
+ * Custom ImageView for circular images in Android while maintaining the
+ * best draw performance and supporting custom borders & selectors.
+ */
 public class CircularImageView extends ImageView {
 	// Border & Selector configuration variables
 	private boolean hasBorder;
@@ -39,8 +43,7 @@ public class CircularImageView extends ImageView {
 		this(context, null);
 	}
 
-	public CircularImageView(Context context, AttributeSet attrs)
-	{
+	public CircularImageView(Context context, AttributeSet attrs) {
 		this(context, attrs, R.attr.circularImageViewStyle);
 	}
 
@@ -51,10 +54,9 @@ public class CircularImageView extends ImageView {
 
 	/**
 	 * Initializes paint objects and sets desired attributes.
-	 *
-	 * @param context
-	 * @param attrs
-	 * @param defStyle
+	 * @param context Context
+	 * @param attrs Attributes
+	 * @param defStyle Default Style
 	 */
 	private void init(Context context, AttributeSet attrs, int defStyle) {
 		// Initialize paint objects
@@ -98,8 +100,7 @@ public class CircularImageView extends ImageView {
 
 	/**
 	 * Sets the CircularImageView's border width in pixels.
-	 *
-	 * @param borderWidth
+	 * @param borderWidth Width in pixels for the border.
 	 */
 	public void setBorderWidth(int borderWidth) {
 		this.borderWidth = borderWidth;
@@ -109,8 +110,7 @@ public class CircularImageView extends ImageView {
 
 	/**
 	 * Sets the CircularImageView's basic border color.
-	 *
-	 * @param borderColor
+	 * @param borderColor The new color (including alpha) to set the border.
 	 */
 	public void setBorderColor(int borderColor) {
 		if (paintBorder != null)
@@ -121,8 +121,7 @@ public class CircularImageView extends ImageView {
 	/**
 	 * Sets the color of the selector to be draw over the
 	 * CircularImageView. Be sure to provide some opacity.
-	 *
-	 * @param selectorColor
+	 * @param selectorColor The color (including alpha) to set for the selector overlay.
 	 */
 	public void setSelectorColor(int selectorColor) {
 		this.selectorFilter = new PorterDuffColorFilter(selectorColor, PorterDuff.Mode.SRC_ATOP);
@@ -132,8 +131,7 @@ public class CircularImageView extends ImageView {
 	/**
 	 * Sets the stroke width to be drawn around the CircularImageView
 	 * during click events when the selector is enabled.
-	 *
-	 * @param selectorStrokeWidth
+	 * @param selectorStrokeWidth Width in pixels for the selector stroke.
 	 */
 	public void setSelectorStrokeWidth(int selectorStrokeWidth) {
 		this.selectorStrokeWidth = selectorStrokeWidth;
@@ -144,8 +142,7 @@ public class CircularImageView extends ImageView {
 	/**
 	 * Sets the stroke color to be drawn around the CircularImageView
 	 * during click events when the selector is enabled.
-	 *
-	 * @param selectorStrokeColor
+	 * @param selectorStrokeColor The color (including alpha) to set for the selector stroke.
 	 */
 	public void setSelectorStrokeColor(int selectorStrokeColor) {
 		if (paintSelectorBorder != null)
@@ -154,7 +151,7 @@ public class CircularImageView extends ImageView {
 	}
 
 	/**
-	 * Adds a dark shadow to this CircularImageView.
+	 * Enables a dark shadow for this CircularImageView.
 	 */
 	public void addShadow() {
 		setLayerType(LAYER_TYPE_SOFTWARE, paintBorder);
@@ -242,6 +239,12 @@ public class CircularImageView extends ImageView {
 
 	public void invalidate(Rect dirty) {
 		super.invalidate(dirty);
+
+		// Don't do anything without a valid drawable
+		if(getDrawable() == null)
+			return;
+
+		// Extract a Bitmap out of the drawable & set it as the main shader
 		image = drawableToBitmap(getDrawable());
 		if(shader != null || canvasSize > 0)
 			refreshBitmapShader();
@@ -249,6 +252,12 @@ public class CircularImageView extends ImageView {
 
 	public void invalidate(int l, int t, int r, int b) {
 		super.invalidate(l, t, r, b);
+
+		// Don't do anything without a valid drawable
+		if(getDrawable() == null)
+			return;
+
+		// Extract a Bitmap out of the drawable & set it as the main shader
 		image = drawableToBitmap(getDrawable());
 		if(shader != null || canvasSize > 0)
 			refreshBitmapShader();
@@ -257,6 +266,12 @@ public class CircularImageView extends ImageView {
 	@Override
 	public void invalidate() {
 		super.invalidate();
+
+		// Don't do anything without a valid drawable
+		if(getDrawable() == null)
+			return;
+
+		// Extract a Bitmap out of the drawable & set it as the main shader
 		image = drawableToBitmap(getDrawable());
 		if(shader != null || canvasSize > 0)
 			refreshBitmapShader();
@@ -291,7 +306,7 @@ public class CircularImageView extends ImageView {
 	}
 
 	private int measureHeight(int measureSpecHeight) {
-		int result = 0;
+		int result;
 		int specMode = MeasureSpec.getMode(measureSpecHeight);
 		int specSize = MeasureSpec.getSize(measureSpecHeight);
 
@@ -310,26 +325,23 @@ public class CircularImageView extends ImageView {
 	}
 
 	/**
-	 * Convert a drawable object into a Bitmap
-	 *
-	 * @param drawable
-	 * @return
+	 * Convert a drawable object into a Bitmap.
+	 * @param drawable Drawable to extract a Bitmap from.
+	 * @return A Bitmap created from the drawable parameter.
 	 */
 	public Bitmap drawableToBitmap(Drawable drawable) {
-		if (drawable == null) { // Don't do anything without a proper drawable
+		if (drawable == null)   // Don't do anything without a proper drawable
 			return null;
-		}
-		else if (drawable instanceof BitmapDrawable) { // Use the getBitmap() method instead if BitmapDrawable
+		else if (drawable instanceof BitmapDrawable)    // Use the getBitmap() method instead if BitmapDrawable
 			return ((BitmapDrawable) drawable).getBitmap();
-		}
 
 		// Create Bitmap object out of the drawable
-		Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-		                                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+		Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
 		Canvas canvas = new Canvas(bitmap);
 		drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
 		drawable.draw(canvas);
 
+		// Return the created Bitmap
 		return bitmap;
 	}
 
@@ -342,7 +354,7 @@ public class CircularImageView extends ImageView {
 	}
 
 	/**
-	 * Returns whether or not this view is currently
+	 * @return Whether or not this view is currently
 	 * in its selected state.
 	 */
 	public boolean isSelected() {
