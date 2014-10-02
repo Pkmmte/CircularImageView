@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.bitmap.Transform;
@@ -94,6 +95,9 @@ public class MainActivity extends Activity
 
 		// Using Picasso...
 		//Picasso.with(this).load(URL).placeholder(R.drawable.default_avatar).error(R.drawable.grumpy_cat).transform(new PicassoRoundTransform()).into(imgNetwork);
+
+		// Using Glide...
+		//Glide.with(this).load(URL).placeholder(R.drawable.default_avatar).error(R.drawable.grumpy_cat).into(imgNetwork);
 
 		// Using ION...
 		Ion.with(this).load(URL).asBitmap().setCallback(new FutureCallback<Bitmap>() {

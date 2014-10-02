@@ -24,6 +24,7 @@ dependencies {
   compile("com.android.support:support-v4:20.+")
   compile group: 'com.squareup.picasso', name: 'picasso', version: '2.3.+'
   compile 'com.koushikdutta.ion:ion:1.+'
+  compile 'com.github.bumptech.glide:glide:3.3.+'
 }
 
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
