@@ -10,18 +10,18 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
 
-public class RoundTransform implements Transformation
+public class PicassoRoundTransform implements Transformation
 {
     private final int radius;
     private final int margin;  // dp
 
-    public RoundTransform()
+    public PicassoRoundTransform()
     {
         this.radius = 0;
         this.margin = 0;
     }
     
-    public RoundTransform(final int radius, final int margin)
+    public PicassoRoundTransform(final int radius, final int margin)
     {
         this.radius = radius;
         this.margin = margin;

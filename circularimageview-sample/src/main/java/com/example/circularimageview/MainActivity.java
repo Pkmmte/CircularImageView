@@ -3,13 +3,18 @@ package com.example.circularimageview;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.bitmap.Transform;
 import com.pkmmte.view.CircularImageView;
 import com.squareup.picasso.Picasso;
 
@@ -75,13 +80,34 @@ public class MainActivity extends Activity
 			}
 		});
 		
-		// Load web image with a round transformation using Picasso
-		String URL = "http://i.imgur.com/LrwApXg.png";
-		CircularImageView imgNetwork = (CircularImageView) footerView.findViewById(R.id.imgNetwork);
-		Picasso.with(this).load(URL).placeholder(R.drawable.default_avatar).error(R.drawable.grumpy_cat).transform(new RoundTransform()).into(imgNetwork);
-		
+		// Load web image with a round transformation
+		final CircularImageView imgNetwork = (CircularImageView) footerView.findViewById(R.id.imgNetwork);
+		loadWebImage(imgNetwork);
+
 		// Set the most basic adapter
 		mAdapter = new SimpleAdapter(this, images);
 		mList.setAdapter(mAdapter);
+	}
+
+	private void loadWebImage(final CircularImageView imgNetwork) {
+		final String URL = "http://i.imgur.com/LrwApXg.png";
+
+		// Using Picasso...
+		//Picasso.with(this).load(URL).placeholder(R.drawable.default_avatar).error(R.drawable.grumpy_cat).transform(new PicassoRoundTransform()).into(imgNetwork);
+
+		// Using ION...
+		Ion.with(this).load(URL).asBitmap().setCallback(new FutureCallback<Bitmap>() {
+			@Override
+			public void onCompleted(Exception e, Bitmap result) {
+				if(e == null) {
+					// Success
+					imgNetwork.setImageBitmap(result);
+				}
+				else {
+					// Error
+					imgNetwork.setImageResource(R.drawable.grumpy_cat);
+				}
+			}
+		});
 	}
 }
