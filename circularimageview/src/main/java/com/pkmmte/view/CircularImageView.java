@@ -1,5 +1,6 @@
 package com.pkmmte.view;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -46,7 +47,7 @@ public class CircularImageView extends ImageView {
 	}
 
 	public CircularImageView(Context context, AttributeSet attrs) {
-		this(context, attrs, R.attr.circularImageViewStyle);
+		this(context, attrs, R.styleable.CircularImageViewStyle_circularImageViewDefault);
 	}
 
 	public CircularImageView(Context context, AttributeSet attrs, int defStyle) {
@@ -69,12 +70,8 @@ public class CircularImageView extends ImageView {
 		paintSelectorBorder = new Paint();
 		paintSelectorBorder.setAntiAlias(true);
 
-		// Disable this view's hardware acceleration on Honeycomb and up (Needed for shadow effect)
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			//setLayerType(LAYER_TYPE_SOFTWARE, paint);
-			setLayerType(LAYER_TYPE_SOFTWARE, paintBorder);
-			setLayerType(LAYER_TYPE_SOFTWARE, paintSelectorBorder);
-		}
+		// Attempt applying shadow layers
+		applyShadow();
 
 		// load the styled attributes and set their properties
 		TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.CircularImageView, defStyle, 0);
@@ -93,8 +90,7 @@ public class CircularImageView extends ImageView {
 		// Set selector properties if enabled
 		if(hasSelector) {
 			int defaultSelectorSize = (int) (2 * context.getResources().getDisplayMetrics().density + 0.5f);
-			setSelectorColor(attributes.getColor(
-				R.styleable.CircularImageView_selector_color, Color.TRANSPARENT));
+			setSelectorColor(attributes.getColor(R.styleable.CircularImageView_selector_color, Color.TRANSPARENT));
 			setSelectorStrokeWidth(attributes.getDimensionPixelOffset(R.styleable.CircularImageView_selector_stroke_width, defaultSelectorSize));
 			setSelectorStrokeColor(attributes.getColor(R.styleable.CircularImageView_selector_stroke_color, Color.BLUE));
 		}
@@ -353,6 +349,19 @@ public class CircularImageView extends ImageView {
 		}
 
 		return (result + 2);
+	}
+
+	/**
+	 * Disable this view's hardware acceleration on Honeycomb
+	 * and up, as long as edit mode is disabled. (Required for shadow effect)
+	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void applyShadow() {
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			//setLayerType(LAYER_TYPE_SOFTWARE, paint);
+			setLayerType(LAYER_TYPE_SOFTWARE, paintBorder);
+			//setLayerType(LAYER_TYPE_SOFTWARE, paintSelectorBorder);
+		}
 	}
 
 	/**

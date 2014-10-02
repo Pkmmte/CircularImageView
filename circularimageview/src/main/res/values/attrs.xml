@@ -22,8 +22,8 @@
         <attr name="shadow" format="boolean"></attr>
     </declare-styleable>
     
-    <declare-styleable name="CustomCircularImageViewTheme">
-        <attr name="circularImageViewStyle" format="reference" />
+    <declare-styleable name="CircularImageViewStyle">
+        <attr name="circularImageViewDefault" format="reference" />
     </declare-styleable>
 
 </resources>
