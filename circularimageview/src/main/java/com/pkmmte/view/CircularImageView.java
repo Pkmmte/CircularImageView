@@ -376,7 +376,14 @@ public class CircularImageView extends ImageView {
 			return ((BitmapDrawable) drawable).getBitmap();
 
 		// Create Bitmap object out of the drawable
-		Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+		Bitmap bitmap = null;
+
+		int intrinsicWidth = drawable.getIntrinsicWidth();
+		int intrinsicHeight = drawable.getIntrinsicHeight();
+
+		if (!(intrinsicWidth > 0 && intrinsicHeight > 0)) return bitmap;
+
+		bitmap = Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888);
 		Canvas canvas = new Canvas(bitmap);
 		drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
 		drawable.draw(canvas);
@@ -390,6 +397,7 @@ public class CircularImageView extends ImageView {
 	 * the Circle upon drawing.
 	 */
 	public void refreshBitmapShader() {
+		if (image == null) return;
 		shader = new BitmapShader(Bitmap.createScaledBitmap(image, canvasSize, canvasSize, false), Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
 	}
 
