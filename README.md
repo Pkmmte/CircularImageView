@@ -31,6 +31,7 @@ or Maven:
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:src="@drawable/image"
+        app:border="true"
         app:border_color="#EEEEEE"
         app:border_width="4dp"
         app:shadow="true" />
