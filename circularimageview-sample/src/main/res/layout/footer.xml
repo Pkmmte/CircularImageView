@@ -75,10 +75,10 @@
             android:layout_height="72dp"
             android:layout_margin="16dp"
             android:src="@drawable/grumpy_cat"
-            app:border="true"
-            app:border_color="@android:color/white"
-            app:border_width="2dp"
-            app:shadow="true" />
+            app:civ_border="true"
+            app:civ_border_color="@android:color/white"
+            app:civ_border_width="2dp"
+            app:civ_shadow="true" />
     </LinearLayout>
 
 </LinearLayout>

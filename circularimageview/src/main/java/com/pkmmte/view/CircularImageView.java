@@ -88,26 +88,26 @@ public class CircularImageView extends ImageView {
 		TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.CircularImageView, defStyle, 0);
 
 		// Check if border and/or border is enabled
-		hasBorder = attributes.getBoolean(R.styleable.CircularImageView_border, false);
-		hasSelector = attributes.getBoolean(R.styleable.CircularImageView_selector, false);
+		hasBorder = attributes.getBoolean(R.styleable.CircularImageView_civ_border, false);
+		hasSelector = attributes.getBoolean(R.styleable.CircularImageView_civ_selector, false);
 
 		// Set border properties if enabled
 		if(hasBorder) {
 			int defaultBorderSize = (int) (2 * context.getResources().getDisplayMetrics().density + 0.5f);
-			setBorderWidth(attributes.getDimensionPixelOffset(R.styleable.CircularImageView_border_width, defaultBorderSize));
-			setBorderColor(attributes.getColor(R.styleable.CircularImageView_border_color, Color.WHITE));
+			setBorderWidth(attributes.getDimensionPixelOffset(R.styleable.CircularImageView_civ_border_width, defaultBorderSize));
+			setBorderColor(attributes.getColor(R.styleable.CircularImageView_civ_border_color, Color.WHITE));
 		}
 
 		// Set selector properties if enabled
 		if(hasSelector) {
 			int defaultSelectorSize = (int) (2 * context.getResources().getDisplayMetrics().density + 0.5f);
-			setSelectorColor(attributes.getColor(R.styleable.CircularImageView_selector_color, Color.TRANSPARENT));
-			setSelectorStrokeWidth(attributes.getDimensionPixelOffset(R.styleable.CircularImageView_selector_stroke_width, defaultSelectorSize));
-			setSelectorStrokeColor(attributes.getColor(R.styleable.CircularImageView_selector_stroke_color, Color.BLUE));
+			setSelectorColor(attributes.getColor(R.styleable.CircularImageView_civ_selector_color, Color.TRANSPARENT));
+			setSelectorStrokeWidth(attributes.getDimensionPixelOffset(R.styleable.CircularImageView_civ_selector_stroke_width, defaultSelectorSize));
+			setSelectorStrokeColor(attributes.getColor(R.styleable.CircularImageView_civ_selector_stroke_color, Color.BLUE));
 		}
 
 		// Add shadow if enabled
-		if(attributes.getBoolean(R.styleable.CircularImageView_shadow, false))
+		if(attributes.getBoolean(R.styleable.CircularImageView_civ_shadow, false))
 			setShadow(true);
 
 		// We no longer need our attributes TypedArray, give it back to cache
@@ -415,16 +415,15 @@ public class CircularImageView extends ImageView {
 	public void updateBitmapShader() {
 		if (image == null)
 			return;
-		long time = System.currentTimeMillis();
+
 		shader = new BitmapShader(image, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
 
-		Matrix matrix = new Matrix();
-		float scale = (float) canvasSize / (float) image.getWidth();
-		Log.d(TAG, "Scale: " + scale);
-		matrix.setScale(scale, scale);
-		shader.setLocalMatrix(matrix);
-
-		Log.w(TAG, "updateBitmapShader took " + (System.currentTimeMillis() - time) + "ms");
+		if(canvasSize != image.getWidth() || canvasSize != image.getHeight()) {
+			Matrix matrix = new Matrix();
+			float scale = (float) canvasSize / (float) image.getWidth();
+			matrix.setScale(scale, scale);
+			shader.setLocalMatrix(matrix);
+		}
 	}
 
 	/**
