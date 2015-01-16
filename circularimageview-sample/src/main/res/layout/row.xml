@@ -17,9 +17,9 @@
         android:layout_marginTop="8dp"
         android:clickable="true"
         app:civ_selector="true"
-        app:civ_selector_color="#44FFBB33"
-        app:civ_selector_stroke_color="#88FF8800"
-        app:civ_selector_stroke_width="2dp" />
+        app:civ_selectorColor="#44FFBB33"
+        app:civ_selectorStrokeColor="#88FF8800"
+        app:civ_selectorStrokeWidth="2dp" />
 
     <TextView
         android:layout_width="match_parent"

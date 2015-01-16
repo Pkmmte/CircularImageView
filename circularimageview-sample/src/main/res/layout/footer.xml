@@ -76,8 +76,8 @@
             android:layout_margin="16dp"
             android:src="@drawable/grumpy_cat"
             app:civ_border="true"
-            app:civ_border_color="@android:color/white"
-            app:civ_border_width="2dp"
+            app:civ_borderColor="@android:color/white"
+            app:civ_borderWidth="2dp"
             app:civ_shadow="true" />
     </LinearLayout>
 

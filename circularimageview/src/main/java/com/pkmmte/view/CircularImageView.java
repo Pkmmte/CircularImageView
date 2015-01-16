@@ -103,23 +103,33 @@ public class CircularImageView extends ImageView {
 		// Load the styled attributes and set their properties
 		TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.CircularImageView, defStyle, 0);
 
-		// Check if border and/or border is enabled
+		// Check for extra features being enabled
 		hasBorder = attributes.getBoolean(R.styleable.CircularImageView_civ_border, false);
 		hasSelector = attributes.getBoolean(R.styleable.CircularImageView_civ_selector, false);
+		shadowEnabled = attributes.getBoolean(R.styleable.CircularImageView_civ_shadow, SHADOW_ENABLED);
 
 		// Set border properties, if enabled
 		if(hasBorder) {
 			int defaultBorderSize = (int) (2 * context.getResources().getDisplayMetrics().density + 0.5f);
-			setBorderWidth(attributes.getDimensionPixelOffset(R.styleable.CircularImageView_civ_border_width, defaultBorderSize));
-			setBorderColor(attributes.getColor(R.styleable.CircularImageView_civ_border_color, Color.WHITE));
+			setBorderWidth(attributes.getDimensionPixelOffset(R.styleable.CircularImageView_civ_borderWidth, defaultBorderSize));
+			setBorderColor(attributes.getColor(R.styleable.CircularImageView_civ_borderColor, Color.WHITE));
 		}
 
 		// Set selector properties, if enabled
 		if(hasSelector) {
 			int defaultSelectorSize = (int) (2 * context.getResources().getDisplayMetrics().density + 0.5f);
-			setSelectorColor(attributes.getColor(R.styleable.CircularImageView_civ_selector_color, Color.TRANSPARENT));
-			setSelectorStrokeWidth(attributes.getDimensionPixelOffset(R.styleable.CircularImageView_civ_selector_stroke_width, defaultSelectorSize));
-			setSelectorStrokeColor(attributes.getColor(R.styleable.CircularImageView_civ_selector_stroke_color, Color.BLUE));
+			setSelectorColor(attributes.getColor(R.styleable.CircularImageView_civ_selectorColor, Color.TRANSPARENT));
+			setSelectorStrokeWidth(attributes.getDimensionPixelOffset(R.styleable.CircularImageView_civ_selectorStrokeWidth, defaultSelectorSize));
+			setSelectorStrokeColor(attributes.getColor(R.styleable.CircularImageView_civ_selectorStrokeColor, Color.BLUE));
+		}
+
+		// Set shadow properties, if enabled
+		if(shadowEnabled) {
+			shadowRadius = attributes.getFloat(R.styleable.CircularImageView_civ_shadowRadius, SHADOW_RADIUS);
+			shadowDx = attributes.getFloat(R.styleable.CircularImageView_civ_shadowDx, SHADOW_DX);
+			shadowDy = attributes.getFloat(R.styleable.CircularImageView_civ_shadowDy, SHADOW_DY);
+			shadowColor = attributes.getColor(R.styleable.CircularImageView_civ_shadowColor, SHADOW_COLOR);
+			setShadowEnabled(true);
 		}
 
 		// We no longer need our attributes TypedArray, give it back to cache
@@ -187,9 +197,6 @@ public class CircularImageView extends ImageView {
 	public void setShadowEnabled(boolean enabled) {
 		shadowEnabled = enabled;
 		updateShadow();
-		//paint.setShadowLayer(0, 0.0f, 2.0f, Color.BLACK);
-		//paintBorder.setShadowLayer(0, 0.0f, 2.0f, Color.BLACK);
-		//paintSelectorBorder.setShadowLayer(0, 0.0f, 2.0f, Color.BLACK);
 	}
 
 	/**
