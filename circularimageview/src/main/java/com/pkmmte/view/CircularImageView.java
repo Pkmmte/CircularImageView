@@ -12,6 +12,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -30,14 +31,27 @@ public class CircularImageView extends ImageView {
 	// For logging purposes
 	private static final String TAG = CircularImageView.class.getSimpleName();
 
+	// Default property values
+	private static final boolean SHADOW_ENABLED = false;
+	private static final float SHADOW_RADIUS = 4f;
+	private static final float SHADOW_DX = 0f;
+	private static final float SHADOW_DY = 2f;
+	private static final int SHADOW_COLOR = Color.BLACK;
+
 	// Border & Selector configuration variables
 	private boolean hasBorder;
 	private boolean hasSelector;
 	private boolean isSelected;
-	private boolean shadowEnabled;
 	private int borderWidth;
 	private int canvasSize;
 	private int selectorStrokeWidth;
+
+	// Shadow properties
+	private boolean shadowEnabled;
+	private float shadowRadius;
+	private float shadowDx;
+	private float shadowDy;
+	private int shadowColor;
 
 	// Objects used for the actual drawing
 	private BitmapShader shader;
@@ -78,37 +92,35 @@ public class CircularImageView extends ImageView {
 		paint.setAntiAlias(true);
 		paintBorder = new Paint();
 		paintBorder.setAntiAlias(true);
+		paintBorder.setStyle(Paint.Style.STROKE);
 		paintSelectorBorder = new Paint();
 		paintSelectorBorder.setAntiAlias(true);
 
-		// Attempt applying shadow layers
-		applyShadow();
+		// Enable software rendering on HoneyComb and up. (needed for shadow)
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			setLayerType(LAYER_TYPE_SOFTWARE, null);
 
-		// load the styled attributes and set their properties
+		// Load the styled attributes and set their properties
 		TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.CircularImageView, defStyle, 0);
 
 		// Check if border and/or border is enabled
 		hasBorder = attributes.getBoolean(R.styleable.CircularImageView_civ_border, false);
 		hasSelector = attributes.getBoolean(R.styleable.CircularImageView_civ_selector, false);
 
-		// Set border properties if enabled
+		// Set border properties, if enabled
 		if(hasBorder) {
 			int defaultBorderSize = (int) (2 * context.getResources().getDisplayMetrics().density + 0.5f);
 			setBorderWidth(attributes.getDimensionPixelOffset(R.styleable.CircularImageView_civ_border_width, defaultBorderSize));
 			setBorderColor(attributes.getColor(R.styleable.CircularImageView_civ_border_color, Color.WHITE));
 		}
 
-		// Set selector properties if enabled
+		// Set selector properties, if enabled
 		if(hasSelector) {
 			int defaultSelectorSize = (int) (2 * context.getResources().getDisplayMetrics().density + 0.5f);
 			setSelectorColor(attributes.getColor(R.styleable.CircularImageView_civ_selector_color, Color.TRANSPARENT));
 			setSelectorStrokeWidth(attributes.getDimensionPixelOffset(R.styleable.CircularImageView_civ_selector_stroke_width, defaultSelectorSize));
 			setSelectorStrokeColor(attributes.getColor(R.styleable.CircularImageView_civ_selector_stroke_color, Color.BLUE));
 		}
-
-		// Add shadow if enabled
-		if(attributes.getBoolean(R.styleable.CircularImageView_civ_shadow, false))
-			setShadow(true);
 
 		// We no longer need our attributes TypedArray, give it back to cache
 		attributes.recycle();
@@ -120,8 +132,10 @@ public class CircularImageView extends ImageView {
 	 */
 	public void setBorderWidth(int borderWidth) {
 		this.borderWidth = borderWidth;
-		this.requestLayout();
-		this.invalidate();
+		if(paintBorder != null)
+			paintBorder.setStrokeWidth(borderWidth);
+		requestLayout();
+		invalidate();
 	}
 
 	/**
@@ -168,32 +182,30 @@ public class CircularImageView extends ImageView {
 
 	/**
 	 * Enables a dark shadow for this CircularImageView.
-	 * @param shadowEnabled Set to true to render a shadow or false to disable it.
+	 * @param enabled Set to true to draw a shadow or false to disable it.
 	 */
-	public void setShadow(boolean shadowEnabled) {
-		this.shadowEnabled = true;
-		if(shadowEnabled) {
-			//paint.setShadowLayer(4.0f, 0.0f, 2.0f, Color.BLACK);
-			paintBorder.setShadowLayer(4.0f, 0.0f, 2.0f, Color.BLACK);
-			paintSelectorBorder.setShadowLayer(4.0f, 0.0f, 2.0f, Color.BLACK);
-		}
-		else {
-			//paint.setShadowLayer(0, 0.0f, 2.0f, Color.BLACK);
-			paintBorder.setShadowLayer(0, 0.0f, 2.0f, Color.BLACK);
-			paintSelectorBorder.setShadowLayer(0, 0.0f, 2.0f, Color.BLACK);
-		}
+	public void setShadowEnabled(boolean enabled) {
+		shadowEnabled = enabled;
+		updateShadow();
+		//paint.setShadowLayer(0, 0.0f, 2.0f, Color.BLACK);
+		//paintBorder.setShadowLayer(0, 0.0f, 2.0f, Color.BLACK);
+		//paintSelectorBorder.setShadowLayer(0, 0.0f, 2.0f, Color.BLACK);
 	}
 
 	/**
 	 * Enables a dark shadow for this CircularImageView.
 	 * If the radius is set to 0, the shadow is removed.
-	 * @param radius
-	 * @param dx
-	 * @param dy
-	 * @param color
+	 * @param radius Radius for the shadow to extend to.
+	 * @param dx Horizontal shadow offset.
+	 * @param dy Vertical shadow offset.
+	 * @param color The color of the shadow to apply.
 	 */
 	public void setShadow(float radius, float dx, float dy, int color) {
-		// TODO
+		shadowRadius = radius;
+		shadowDx = dx;
+		shadowDy = dy;
+		shadowColor = color;
+		updateShadow();
 	}
 
 	@Override
@@ -206,12 +218,9 @@ public class CircularImageView extends ImageView {
 		if(image.getHeight() == 0 || image.getWidth() == 0)
 			return;
 
-		// We'll need this later
+		// Update shader if canvas size has changed
 		int oldCanvasSize = canvasSize;
-
 		canvasSize = getWidth() < getHeight() ? getWidth() : getHeight();
-
-		// Reinitialize shader, if necessary
 		if(oldCanvasSize != canvasSize)
 			updateBitmapShader();
 
@@ -237,13 +246,15 @@ public class CircularImageView extends ImageView {
 			center = (canvasSize - (outerWidth * 2)) / 2;
 
 			paint.setColorFilter(null);
-			canvas.drawCircle(center + outerWidth, center + outerWidth, ((canvasSize - (outerWidth * 2)) / 2) + outerWidth - 4.0f, paintBorder);
+			RectF rekt = new RectF(0 + outerWidth / 2, 0 + outerWidth / 2, canvasSize - outerWidth / 2, canvasSize - outerWidth / 2);
+			canvas.drawArc(rekt, 360, 360, false, paintBorder);
+			//canvas.drawCircle(center + outerWidth, center + outerWidth, ((canvasSize - (outerWidth * 2)) / 2) + outerWidth - 4.0f, paintBorder);
 		}
 		else // Clear the color filter if no selector nor border were drawn
 			paint.setColorFilter(null);
 
 		// Draw the circular image itself
-		canvas.drawCircle(center + outerWidth, center + outerWidth, ((canvasSize - (outerWidth * 2)) / 2) - 4.0f, paint);
+		canvas.drawCircle(center + outerWidth, center + outerWidth, ((canvasSize - (outerWidth * 2)) / 2), paint);
 	}
 
 	@Override
@@ -359,17 +370,12 @@ public class CircularImageView extends ImageView {
 		return (result + 2);
 	}
 
-	/**
-	 * Disable this view's hardware acceleration on Honeycomb
-	 * and up, as long as edit mode is disabled. (Required for shadow effect)
-	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private void applyShadow() {
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			//setLayerType(LAYER_TYPE_SOFTWARE, paint);
-			setLayerType(LAYER_TYPE_SOFTWARE, paintBorder);
-			//setLayerType(LAYER_TYPE_SOFTWARE, paintSelectorBorder);
-		}
+	// TODO: Update shadow layers based on border/selector state and visibility.
+	private void updateShadow() {
+		float radius = shadowEnabled ? shadowRadius : 0;
+		//paint.setShadowLayer(radius, shadowDx, shadowDy, shadowColor);
+		paintBorder.setShadowLayer(radius, shadowDx, shadowDy, shadowColor);
+		paintSelectorBorder.setShadowLayer(radius, shadowDx, shadowDy, shadowColor);
 	}
 
 	/**
