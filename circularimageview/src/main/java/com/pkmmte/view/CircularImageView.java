@@ -8,6 +8,7 @@ import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -212,7 +213,7 @@ public class CircularImageView extends ImageView {
 
 		// Reinitialize shader, if necessary
 		if(oldCanvasSize != canvasSize)
-			refreshBitmapShader();
+			updateBitmapShader();
 
 		// Apply shader to paint
 		paint.setShader(shader);
@@ -277,8 +278,8 @@ public class CircularImageView extends ImageView {
 
 		// Extract a Bitmap out of the drawable & set it as the main shader
 		image = drawableToBitmap(getDrawable());
-		if(shader == null && canvasSize > 0)
-			refreshBitmapShader();
+		if(canvasSize > 0)
+			updateBitmapShader();
 	}
 
 	@Override
@@ -287,8 +288,8 @@ public class CircularImageView extends ImageView {
 
 		// Extract a Bitmap out of the drawable & set it as the main shader
 		image = drawableToBitmap(getDrawable());
-		if(shader == null && canvasSize > 0)
-			refreshBitmapShader();
+		if(canvasSize > 0)
+			updateBitmapShader();
 	}
 
 	@Override
@@ -297,8 +298,8 @@ public class CircularImageView extends ImageView {
 
 		// Extract a Bitmap out of the drawable & set it as the main shader
 		image = drawableToBitmap(getDrawable());
-		if(shader == null && canvasSize > 0)
-			refreshBitmapShader();
+		if(canvasSize > 0)
+			updateBitmapShader();
 	}
 
 	@Override
@@ -307,8 +308,8 @@ public class CircularImageView extends ImageView {
 
 		// Extract a Bitmap out of the drawable & set it as the main shader
 		image = bm;
-		if(shader == null && canvasSize > 0)
-			refreshBitmapShader();
+		if(canvasSize > 0)
+			updateBitmapShader();
 	}
 
 	@Override
@@ -408,15 +409,22 @@ public class CircularImageView extends ImageView {
 	public void setIconModeEnabled(boolean e) {}
 
 	/**
-	 * Reinitializes the shader texture used to fill in
+	 * Re-initializes the shader texture used to fill in
 	 * the Circle upon drawing.
 	 */
-	public void refreshBitmapShader() {
+	public void updateBitmapShader() {
 		if (image == null)
 			return;
 		long time = System.currentTimeMillis();
-		shader = new BitmapShader(Bitmap.createScaledBitmap(image, canvasSize, canvasSize, false), Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-		Log.w(TAG, "refreshBitmapShader took " + (System.currentTimeMillis() - time) + "ms");
+		shader = new BitmapShader(image, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+
+		Matrix matrix = new Matrix();
+		float scale = (float) canvasSize / (float) image.getWidth();
+		Log.d(TAG, "Scale: " + scale);
+		matrix.setScale(scale, scale);
+		shader.setLocalMatrix(matrix);
+
+		Log.w(TAG, "updateBitmapShader took " + (System.currentTimeMillis() - time) + "ms");
 	}
 
 	/**
