@@ -15,8 +15,10 @@ import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
@@ -25,6 +27,9 @@ import android.widget.ImageView;
  * best draw performance and supporting custom borders & selectors.
  */
 public class CircularImageView extends ImageView {
+	// For logging purposes
+	private static final String TAG = CircularImageView.class.getSimpleName();
+
 	// Border & Selector configuration variables
 	private boolean hasBorder;
 	private boolean hasSelector;
@@ -43,7 +48,7 @@ public class CircularImageView extends ImageView {
 	private ColorFilter selectorFilter;
 
 	public CircularImageView(Context context) {
-		this(context, null);
+		this(context, null, R.styleable.CircularImageViewStyle_circularImageViewDefault);
 	}
 
 	public CircularImageView(Context context, AttributeSet attrs) {
@@ -270,41 +275,35 @@ public class CircularImageView extends ImageView {
 	public void invalidate(Rect dirty) {
 		super.invalidate(dirty);
 
-		// Don't do anything without a valid drawable
-		if(getDrawable() == null)
-			return;
-
+		long time = System.currentTimeMillis();
 		// Extract a Bitmap out of the drawable & set it as the main shader
 		image = drawableToBitmap(getDrawable());
 		if(shader != null || canvasSize > 0)
 			refreshBitmapShader();
+		Log.w(TAG, "Bitmap extraction took " + (System.currentTimeMillis() - time) + "ms");
 	}
 
 	public void invalidate(int l, int t, int r, int b) {
 		super.invalidate(l, t, r, b);
 
-		// Don't do anything without a valid drawable
-		if(getDrawable() == null)
-			return;
-
+		long time = System.currentTimeMillis();
 		// Extract a Bitmap out of the drawable & set it as the main shader
 		image = drawableToBitmap(getDrawable());
 		if(shader != null || canvasSize > 0)
 			refreshBitmapShader();
+		Log.w(TAG, "Bitmap extraction took " + (System.currentTimeMillis() - time) + "ms");
 	}
 
 	@Override
 	public void invalidate() {
 		super.invalidate();
 
-		// Don't do anything without a valid drawable
-		if(getDrawable() == null)
-			return;
-
+		long time = System.currentTimeMillis();
 		// Extract a Bitmap out of the drawable & set it as the main shader
 		image = drawableToBitmap(getDrawable());
 		if(shader != null || canvasSize > 0)
 			refreshBitmapShader();
+		Log.w(TAG, "Bitmap extraction took " + (System.currentTimeMillis() - time) + "ms");
 	}
 
 	@Override
@@ -375,25 +374,33 @@ public class CircularImageView extends ImageView {
 	public Bitmap drawableToBitmap(Drawable drawable) {
 		if (drawable == null)   // Don't do anything without a proper drawable
 			return null;
-		else if (drawable instanceof BitmapDrawable)    // Use the getBitmap() method instead if BitmapDrawable
+		else if (drawable instanceof BitmapDrawable) {  // Use the getBitmap() method instead if BitmapDrawable
+			Log.i(TAG, "Bitmap drawable!");
 			return ((BitmapDrawable) drawable).getBitmap();
-
-		// Create Bitmap object out of the drawable
-		Bitmap bitmap = null;
+		}
 
 		int intrinsicWidth = drawable.getIntrinsicWidth();
 		int intrinsicHeight = drawable.getIntrinsicHeight();
 
-		if (!(intrinsicWidth > 0 && intrinsicHeight > 0)) return bitmap;
+		if (!(intrinsicWidth > 0 && intrinsicHeight > 0))
+			return null;
 
-		bitmap = Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888);
-		Canvas canvas = new Canvas(bitmap);
-		drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-		drawable.draw(canvas);
-
-		// Return the created Bitmap
-		return bitmap;
+		try {
+			// Create Bitmap object out of the drawable
+			Bitmap bitmap = Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888);
+			Canvas canvas = new Canvas(bitmap);
+			drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+			drawable.draw(canvas);
+			return bitmap;
+		} catch (OutOfMemoryError e) {
+			// Simply return null of failed bitmap creations
+			Log.e(TAG, "Encountered OutOfMemoryError while generating bitmap!");
+			return null;
+		}
 	}
+
+	// TODO TEST REMOVE
+	public void setIconModeEnabled(boolean e) {}
 
 	/**
 	 * Reinitializes the shader texture used to fill in
