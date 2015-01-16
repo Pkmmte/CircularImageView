@@ -11,7 +11,6 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -272,38 +271,44 @@ public class CircularImageView extends ImageView {
 		return super.dispatchTouchEvent(event);
 	}
 
-	public void invalidate(Rect dirty) {
-		super.invalidate(dirty);
+	@Override
+	public void setImageURI(Uri uri) {
+		super.setImageURI(uri);
 
-		long time = System.currentTimeMillis();
 		// Extract a Bitmap out of the drawable & set it as the main shader
 		image = drawableToBitmap(getDrawable());
-		if(shader != null || canvasSize > 0)
+		if(shader == null && canvasSize > 0)
 			refreshBitmapShader();
-		Log.w(TAG, "Bitmap extraction took " + (System.currentTimeMillis() - time) + "ms");
-	}
-
-	public void invalidate(int l, int t, int r, int b) {
-		super.invalidate(l, t, r, b);
-
-		long time = System.currentTimeMillis();
-		// Extract a Bitmap out of the drawable & set it as the main shader
-		image = drawableToBitmap(getDrawable());
-		if(shader != null || canvasSize > 0)
-			refreshBitmapShader();
-		Log.w(TAG, "Bitmap extraction took " + (System.currentTimeMillis() - time) + "ms");
 	}
 
 	@Override
-	public void invalidate() {
-		super.invalidate();
+	public void setImageResource(int resId) {
+		super.setImageResource(resId);
 
-		long time = System.currentTimeMillis();
 		// Extract a Bitmap out of the drawable & set it as the main shader
 		image = drawableToBitmap(getDrawable());
-		if(shader != null || canvasSize > 0)
+		if(shader == null && canvasSize > 0)
 			refreshBitmapShader();
-		Log.w(TAG, "Bitmap extraction took " + (System.currentTimeMillis() - time) + "ms");
+	}
+
+	@Override
+	public void setImageDrawable(Drawable drawable) {
+		super.setImageDrawable(drawable);
+
+		// Extract a Bitmap out of the drawable & set it as the main shader
+		image = drawableToBitmap(getDrawable());
+		if(shader == null && canvasSize > 0)
+			refreshBitmapShader();
+	}
+
+	@Override
+	public void setImageBitmap(Bitmap bm) {
+		super.setImageBitmap(bm);
+
+		// Extract a Bitmap out of the drawable & set it as the main shader
+		image = bm;
+		if(shader == null && canvasSize > 0)
+			refreshBitmapShader();
 	}
 
 	@Override
@@ -407,8 +412,11 @@ public class CircularImageView extends ImageView {
 	 * the Circle upon drawing.
 	 */
 	public void refreshBitmapShader() {
-		if (image == null) return;
+		if (image == null)
+			return;
+		long time = System.currentTimeMillis();
 		shader = new BitmapShader(Bitmap.createScaledBitmap(image, canvasSize, canvasSize, false), Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+		Log.w(TAG, "refreshBitmapShader took " + (System.currentTimeMillis() - time) + "ms");
 	}
 
 	/**
