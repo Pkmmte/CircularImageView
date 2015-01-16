@@ -50,9 +50,15 @@ public class CircularImageView extends ImageView {
 		this(context, attrs, R.styleable.CircularImageViewStyle_circularImageViewDefault);
 	}
 
-	public CircularImageView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		init(context, attrs, defStyle);
+	public CircularImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+		super(context, attrs, defStyleAttr);
+		init(context, attrs, defStyleAttr);
+	}
+
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	public CircularImageView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+		super(context, attrs, defStyleAttr, defStyleRes);
+		init(context, attrs, defStyleAttr);
 	}
 
 	/**
