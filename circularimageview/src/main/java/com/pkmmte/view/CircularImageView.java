@@ -8,6 +8,7 @@ import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
+import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -157,6 +158,18 @@ public class CircularImageView extends ImageView {
 			paintBorder.setColor(borderColor);
 		this.invalidate();
 	}
+
+    /**
+     * Sets the CircularImageView's border linear gradient.
+     * @param gradient The gradient to be applied.
+     */
+    public void setBorderGradient(LinearGradient gradient) {
+        if (paintBorder != null) {
+            paintBorder.setDither(true);
+            paintBorder.setShader(gradient);
+        }
+        this.invalidate();
+    }
 
 	/**
 	 * Sets the color of the selector to be draw over the

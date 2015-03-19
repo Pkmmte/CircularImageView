@@ -4,20 +4,19 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.bitmap.Transform;
 import com.pkmmte.view.CircularImageView;
-import com.squareup.picasso.Picasso;
 
 public class MainActivity extends Activity
 {
@@ -62,6 +61,10 @@ public class MainActivity extends Activity
 		
 		// DOGE!!!
 		final CircularImageView imgDoge = (CircularImageView) headerView.findViewById(R.id.imgDoge);
+        final int dogeSize = 196;
+        LinearGradient gradient = new LinearGradient(-dogeSize /2, 0, dogeSize /2, dogeSize, Color.BLACK, Color.WHITE, Shader.TileMode.CLAMP);
+        imgDoge.setBorderGradient(gradient);
+
 		final TextView txtWow = (TextView) headerView.findViewById(R.id.txtWow);
 		final TextView txtClick = (TextView) headerView.findViewById(R.id.txtClick);
 		
