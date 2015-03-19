@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-  compile project(':circularimageview')
+  compile group: 'com.pkmmte.view', name: 'circularimageview', version: '1.+'
   compile("com.android.support:support-v4:20.+")
   compile group: 'com.squareup.picasso', name: 'picasso', version: '2.3.+'
   compile 'com.koushikdutta.ion:ion:1.+'
