@@ -1,7 +1,7 @@
 CircularImageView
 =================
 
-Custom view for circular images in Android while maintaining the best draw performance
+Custom view for circular images in Android while maintaining the best draw performance for SDK 14 and above.
 
 
 ![Imgur](http://i.imgur.com/Q33e2Zb.gif)
