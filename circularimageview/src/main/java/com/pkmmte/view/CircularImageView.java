@@ -295,7 +295,7 @@ public class CircularImageView extends ImageView {
 		super.setImageURI(uri);
 
 		// Extract a Bitmap out of the drawable & set it as the main shader
-		image = drawableToBitmap(getDrawable());
+		image = ImageUtils.getBitmap(getDrawable());
 		if(canvasSize > 0)
 			updateBitmapShader();
 	}
@@ -305,7 +305,7 @@ public class CircularImageView extends ImageView {
 		super.setImageResource(resId);
 
 		// Extract a Bitmap out of the drawable & set it as the main shader
-		image = drawableToBitmap(getDrawable());
+		image = ImageUtils.getBitmap(getDrawable());
 		if(canvasSize > 0)
 			updateBitmapShader();
 	}
@@ -315,7 +315,7 @@ public class CircularImageView extends ImageView {
 		super.setImageDrawable(drawable);
 
 		// Extract a Bitmap out of the drawable & set it as the main shader
-		image = drawableToBitmap(getDrawable());
+		image = ImageUtils.getBitmap(getDrawable());
 		if(canvasSize > 0)
 			updateBitmapShader();
 	}
@@ -383,39 +383,6 @@ public class CircularImageView extends ImageView {
 		//paint.setShadowLayer(radius, shadowDx, shadowDy, shadowColor);
 		paintBorder.setShadowLayer(radius, shadowDx, shadowDy, shadowColor);
 		paintSelectorBorder.setShadowLayer(radius, shadowDx, shadowDy, shadowColor);
-	}
-
-	/**
-	 * Convert a drawable object into a Bitmap.
-	 * @param drawable Drawable to extract a Bitmap from.
-	 * @return A Bitmap created from the drawable parameter.
-	 */
-	public Bitmap drawableToBitmap(Drawable drawable) {
-		if (drawable == null)   // Don't do anything without a proper drawable
-			return null;
-		else if (drawable instanceof BitmapDrawable) {  // Use the getBitmap() method instead if BitmapDrawable
-			Log.i(TAG, "Bitmap drawable!");
-			return ((BitmapDrawable) drawable).getBitmap();
-		}
-
-		int intrinsicWidth = drawable.getIntrinsicWidth();
-		int intrinsicHeight = drawable.getIntrinsicHeight();
-
-		if (!(intrinsicWidth > 0 && intrinsicHeight > 0))
-			return null;
-
-		try {
-			// Create Bitmap object out of the drawable
-			Bitmap bitmap = Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888);
-			Canvas canvas = new Canvas(bitmap);
-			drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-			drawable.draw(canvas);
-			return bitmap;
-		} catch (OutOfMemoryError e) {
-			// Simply return null of failed bitmap creations
-			Log.e(TAG, "Encountered OutOfMemoryError while generating bitmap!");
-			return null;
-		}
 	}
 
 	// TODO TEST REMOVE
