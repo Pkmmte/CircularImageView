@@ -25,7 +25,7 @@ or Maven:
 </dependency>
 ```
 
-###XML
+### XML
 ```xml
     <com.pkmmte.view.CircularImageView
         android:layout_width="250dp"
@@ -39,7 +39,7 @@ or Maven:
 
 You may use the following properties in your XML to customize your CircularImageView.
 
-#####Properties:
+##### Properties:
 
 * `app:border`       (boolean)             -> default false
 * `app:border_color` (color)               -> default WHITE
@@ -50,7 +50,7 @@ You may use the following properties in your XML to customize your CircularImage
 * `app:selector_stroke_width` (dimension)  -> default 2dp
 * `app:shadow`       (boolean)             -> default false
 
-###JAVA
+### JAVA
 
 ```java
     CircularImageView circularImageView = (CircularImageView)findViewById(R.id.yourCircularImageView);
